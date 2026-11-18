@@ -39,8 +39,8 @@ public void OnConfigsExecuted()
 
 ## Used by
 
-- [SourceMod-AFKbomb](https://github.com/Ballganda/SourceMod-AFKbomb) — its `tests/afkbomb_tests.sp` suite
-  exercises this include through AFK Bomb's cvars.
+- [SourceMod-AFKbomb](https://github.com/Ballganda/SourceMod-AFKbomb) — submodule at `incs/`; its
+  `tests/afkbomb_tests.sp` suite exercises this include through AFK Bomb's cvars.
 
 ## History
 

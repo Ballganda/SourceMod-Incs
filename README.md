@@ -9,14 +9,30 @@ needs the stock SourceMod includes.
 | --- | --- | --- |
 | [`instance_config`](scripting/include/instance_config.inc) | Plugin settings in `<SourceMod path>/configs/<plugin>.cfg` instead of the shared game `cfg` folder, so servers that share one game install keep separate settings | [docs/instance_config.md](docs/instance_config.md) |
 
-## Using an include in a plugin
+## Using the includes in a plugin repo
 
-1. Copy the `.inc` file into the plugin's own `scripting/include/` folder (or into the server's
-   `addons/sourcemod/scripting/include/`).
-2. `#include <name>` in the plugin and compile with `-i<that folder>`.
+Add this repo as a git submodule at `incs/`, pinned to a commit:
 
-Copying keeps each plugin buildable and its release zip complete on its own. When an include changes here, copy
-the new version into each plugin that uses it.
+```bash
+git submodule add https://github.com/Ballganda/SourceMod-Incs.git incs
+```
+
+- Compile with `-iincs/scripting/include` (next to `-i<SourceMod>/scripting/include`), and `#include <name>` in
+  the plugin.
+- Clone the plugin repo with `git clone --recurse-submodules`, or run `git submodule update --init` in an
+  existing clone. A build script should stop with that command in its error when `incs/scripting/include` is
+  missing.
+- Don't edit the includes inside `incs/`. Change them here, then move the plugin to the new commit:
+
+  ```bash
+  git -C incs pull origin main
+  ```
+
+  then build, test and commit the new `incs` pointer in the plugin repo.
+- Release zips: copy only the includes the plugin uses from `incs/scripting/include/` to
+  `addons/sourcemod/scripting/include/` in the zip, so the shipped source recompiles with just the stock includes.
+
+Without git (one-off server builds), copy the `.inc` into `addons/sourcemod/scripting/include/` on the server.
 
 ## Layout
 
@@ -37,7 +53,8 @@ the new version into each plugin that uses it.
 
 ## Adding an include
 
-1. `scripting/include/<name>.inc` with an `_<name>_included` guard and a header comment showing usage.
+1. `scripting/include/<name>.inc` with an `_<name>_included` guard and a header comment showing usage. Keep
+   the path: consumer builds point `-i` at `incs/scripting/include`.
 2. `docs/<name>.md` and a row in the table above.
 3. `tests/<name>_test.sp` that calls every public function; `.\build.ps1` must pass.
 
