@@ -60,4 +60,5 @@ Without git (one-off server builds), copy the `.inc` into `addons/sourcemod/scri
 
 ## License
 
-CC0 1.0 — see [LICENSE](LICENSE).
+GNU General Public License v3.0 — see [LICENSE](LICENSE). SourceMod plugins and includes must be GPLv3
+([SourceMod license](https://www.sourcemod.net/license.php)).

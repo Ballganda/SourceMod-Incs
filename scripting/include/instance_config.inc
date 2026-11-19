@@ -1,6 +1,8 @@
 /**
  * Per-instance plugin config.
  *
+ * SPDX-License-Identifier: GPL-3.0-only (see LICENSE in the SourceMod-Incs repo)
+ *
  * SourceMod's AutoExecConfig always writes to, and executes from, the shared game "cfg" folder and ignores
  * the server's SourceMod path, so servers that share one game installation but have separate SourceMod
  * folders overwrite each other's settings. This include keeps the config in
