@@ -55,7 +55,7 @@ static StringMap g_InstCfgReported;   // lower-cased unknown names already writt
  * @param deprecated    True for a cvar that is only kept so old configs still load: its entry in a generated
  *                      file says so. The cvar's description plays no part in this.
  */
-stock void InstCfg_Add(Handle cvar, bool deprecated = false)
+stock void InstCfg_Add(ConVar cvar, bool deprecated = false)
 {
 	if (g_InstCfgCvars == null)
 	{
@@ -137,7 +137,7 @@ stock bool InstCfg_Ensure()
 	int count = g_InstCfgCvars.Length;
 	for (int i = 0; i < count; i++)
 	{
-		ConVar cvar = view_as<ConVar>(g_InstCfgCvars.Get(i));
+		ConVar cvar = g_InstCfgCvars.Get(i);
 		char name[128];
 		cvar.GetName(name, sizeof(name));
 		char key[128];
@@ -186,7 +186,7 @@ stock bool InstCfg_Apply()
 	int count = g_InstCfgCvars.Length;
 	for (int i = 0; i < count; i++)
 	{
-		ConVar cvar = view_as<ConVar>(g_InstCfgCvars.Get(i));
+		ConVar cvar = g_InstCfgCvars.Get(i);
 		char key[128];
 		cvar.GetName(key, sizeof(key));
 		InstCfg_Lower(key);
