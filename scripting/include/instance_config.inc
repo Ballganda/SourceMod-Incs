@@ -7,9 +7,11 @@
  * the server's SourceMod path, so servers that share one game installation but have separate SourceMod
  * folders overwrite each other's settings. This include keeps the config in
  *
- *   <SourceMod path>/configs/<plugin file name>.cfg
+ *   <SourceMod path>/configs/<subfolder>/<plugin file name>.cfg
  *
  * (BuildPath(Path_SM, ...) : each server instance gets its own file) and never touches the game cfg folder.
+ * <subfolder> is the plugin's folder under plugins/, so plugins/afkbomb.smx uses configs/afkbomb.cfg and
+ * plugins/test/afkbomb.smx uses configs/test/afkbomb.cfg. Missing folders are created.
  *
  * Usage, in the plugin:
  *
@@ -124,6 +126,12 @@ stock bool InstCfg_Ensure()
 		}
 	}
 
+	if (!exists && !InstCfg_MakeDirs(path))
+	{
+		delete present;
+		return false;
+	}
+
 	File out = OpenFile(path, exists ? "ab" : "wb");
 	if (out == null)
 	{
@@ -233,14 +241,31 @@ static void InstCfg_Path(char[] path, int maxlen)
 {
 	char file[PLATFORM_MAX_PATH];
 	GetPluginFilename(GetMyHandle(), file, sizeof(file));
+	ReplaceString(file, sizeof(file), "\\", "/");
 	int slash = FindCharInString(file, '/', true);
-	int back = FindCharInString(file, '\\', true);
-	if (back > slash)
-		slash = back;
 	int dot = FindCharInString(file, '.', true);
 	if (dot > slash)
 		file[dot] = '\0';
-	BuildPath(Path_SM, path, maxlen, "configs/%s.cfg", file[slash + 1]);
+	BuildPath(Path_SM, path, maxlen, "configs/%s.cfg", file);
+}
+
+// Creates each missing folder between configs/ and the file name (CreateDirectory is not recursive).
+static bool InstCfg_MakeDirs(const char[] path)
+{
+	char dir[PLATFORM_MAX_PATH];
+	int start = BuildPath(Path_SM, dir, sizeof(dir), "configs");
+	for (int i = start + 1; path[i] != '\0'; i++)
+	{
+		if (path[i] != '/' && path[i] != '\\')
+			continue;
+		strcopy(dir, i + 1, path);
+		if (!DirExists(dir) && !CreateDirectory(dir))
+		{
+			LogError("Cannot create folder %s", dir);
+			return false;
+		}
+	}
+	return true;
 }
 
 static void InstCfg_Lower(char[] str)

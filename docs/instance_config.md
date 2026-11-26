@@ -2,8 +2,15 @@
 
 Per-instance plugin config. SourceMod's `AutoExecConfig` always writes to, and runs from, the shared game `cfg`
 folder, so servers that share one game install but have separate SourceMod folders overwrite each other's
-settings. This include keeps the file at `<SourceMod path>/configs/<plugin file name>.cfg`
-(`BuildPath(Path_SM, ...)`) and never touches the game `cfg` folder.
+settings. This include keeps the file at `<SourceMod path>/configs/<subfolder>/<plugin file name>.cfg`
+(`BuildPath(Path_SM, ...)`) and never touches the game `cfg` folder. `<subfolder>` is the plugin's folder under
+`plugins/`, so two plugins with the same file name in different folders get different files. Missing folders
+are created.
+
+| Plugin | Config |
+| --- | --- |
+| `plugins/afkbomb.smx` | `configs/afkbomb.cfg` |
+| `plugins/test/afkbomb.smx` | `configs/test/afkbomb.cfg` |
 
 ## API
 
@@ -41,8 +48,15 @@ public void OnConfigsExecuted()
 
 - [SourceMod-AFKbomb](https://github.com/Ballganda/SourceMod-AFKbomb) — submodule at `incs/`; its
   `tests/afkbomb_tests.sp` suite exercises this include through AFK Bomb's cvars.
+- [SourceMod-DisableScopes](https://github.com/Ballganda/SourceMod-DisableScopes) — submodule at `incs/`.
 
 ## History
+
+- Config path keeps the plugin's subfolder under `plugins/` (this commit; see `git log -- docs/instance_config.md`).
+  A plugin directly in `plugins/` keeps its path. A plugin in a subfolder now uses
+  `configs/<subfolder>/<name>.cfg`: the old `configs/<name>.cfg` is no longer read, and a new file with default
+  values is written. Server owners move the old file to the new path to keep their settings.
+  `InstCfg_Ensure` returns false and logs one error when it cannot create the folder.
 
 Moved here from SourceMod-AFKbomb `scripting/include/instance_config.inc` at commit `145a087`, unchanged.
 Earlier changes, in that repo:
