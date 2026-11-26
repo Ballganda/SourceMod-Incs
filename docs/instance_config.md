@@ -52,7 +52,7 @@ public void OnConfigsExecuted()
 
 ## History
 
-- Config path keeps the plugin's subfolder under `plugins/` (this commit; see `git log -- docs/instance_config.md`).
+- Config path keeps the plugin's subfolder under `plugins/` (Incs #1).
   A plugin directly in `plugins/` keeps its path. A plugin in a subfolder now uses
   `configs/<subfolder>/<name>.cfg`: the old `configs/<name>.cfg` is no longer read, and a new file with default
   values is written. Server owners move the old file to the new path to keep their settings.
